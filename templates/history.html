@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Prediction History</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+body{font-family:"Inter",Arial,sans-serif;background:#0f172a;color:#f1f5f9;margin:0;padding:40px 20px;}
+table{width:100%;border-collapse:collapse;margin-top:20px;font-size:14px;}
+th,td{padding:10px 12px;border:1px solid #334155;vertical-align:top;}
+th{background:#1e293b;}
+tr:nth-child(even){background:#13263f;}
+.badge{padding:4px 8px;border-radius:6px;font-weight:600;color:#fff;display:inline-block;}
+.fake{background:#dc2626;}
+.real{background:#16a34a;}
+a{color:#3b82f6;text-decoration:none;font-weight:600;}
+a:hover{text-decoration:underline;}
+</style>
+</head>
+<body>
+<h2>Prediction History</h2>
+<p><a href="/">← Back</a></p>
+{% if rows and rows|length > 0 %}
+<table>
+  <thead>
+    <tr>
+      {% for h in headers %}
+      <th>{{ h }}</th>
+      {% endfor %}
+    </tr>
+  </thead>
+  <tbody>
+    {% for r in rows %}
+    <tr>
+      <td>{{ r[0] }}</td>
+      <td style="white-space:pre-wrap;">{{ r[1] }}</td>
+      <td>
+        <span class="badge {% if r[2] == 'Fake Job' %}fake{% else %}real{% endif %}">
+          {{ r[2] }}
+        </span>
+      </td>
+      <td>{{ r[3] }}%</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>No history yet.</p>
+{% endif %}
+</body>
+</html>

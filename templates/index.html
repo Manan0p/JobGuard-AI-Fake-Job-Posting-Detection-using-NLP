@@ -1,172 +1,190 @@
-<!-- ...existing code... -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Fake Job Detection</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-<style>
-:root {
-  --bg:#0f172a;
-  --panel:#1e293b;
-  --accent:#3b82f6;
-  --accent-hover:#1d4ed8;
-  --text:#f1f5f9;
-  --danger:#dc2626;
-  --muted:#94a3b8;
-}
-body {
-  font-family:"Inter", Arial, sans-serif;
-  background:var(--bg);
-  color:var(--text);
-  margin:0;
-  padding:40px 20px;
-}
-h2 { margin-top:0; letter-spacing:.5px; }
-form {
-  background:var(--panel);
-  padding:28px 34px;
-  border-radius:14px;
-  max-width:760px;
-  margin:0 auto 28px;
-  box-shadow:0 8px 20px -6px rgba(0,0,0,.45);
-}
-textarea {
-  width:100%;
-  min-height:160px;
-  resize:vertical;
-  padding:14px;
-  font-size:15px;
-  border:1px solid #334155;
-  border-radius:10px;
-  background:#0f1e33;
-  color:var(--text);
-  outline:none;
-}
-textarea:focus { border-color:var(--accent); }
-button {
-  margin-top:18px;
-  padding:14px 26px;
-  font-size:15px;
-  font-weight:600;
-  letter-spacing:.5px;
-  border:none;
-  border-radius:10px;
-  background:linear-gradient(135deg,var(--accent),#6366f1);
-  color:#fff;
-  cursor:pointer;
-  transition:.18s;
-  box-shadow:0 4px 14px -4px #1d4ed8;
-}
-button:hover { transform:translateY(-2px); background:linear-gradient(135deg,var(--accent-hover),#4f46e5); }
-.tips {
-  max-width:760px;
-  margin:0 auto 30px;
-  background:#13263f;
-  padding:22px 28px;
-  border-left:5px solid var(--accent);
-  border-radius:12px;
-  line-height:1.45;
-}
-.tips h3 { margin:0 0 12px; font-size:19px; }
-.tips ul { margin:0; padding-left:20px; }
-.tips li { margin-bottom:6px; }
-.error { color:var(--danger); margin-top:12px; font-weight:600; }
-footer {
-  margin-top:40px;
-  text-align:center;
-  font-size:13px;
-  color:var(--muted);
-}
-footer span { color:var(--accent); font-weight:600; }
-</style>
+  <meta charset="UTF-8">
+  <title>Fake Job Detection</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:#0f172a;
+      --panel:#1e293b;
+      --accent:#3b82f6;
+      --accent-hover:#1d4ed8;
+      --text:#f1f5f9;
+      --danger:#dc2626;
+      --muted:#94a3b8;
+    }
+    body {
+      font-family:"Inter", Arial, sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      margin:0;
+      padding:40px 20px;
+    }
+    h2 { margin-top:0; letter-spacing:.5px; }
+    form {
+      background:var(--panel);
+      padding:28px 34px;
+      border-radius:14px;
+      max-width:760px;
+      margin:0 auto 28px;
+      box-shadow:0 8px 20px -6px rgba(0,0,0,.45);
+    }
+    textarea {
+      width:100%;
+      min-height:160px;
+      resize:vertical;
+      padding:14px;
+      font-size:15px;
+      border:1px solid #334155;
+      border-radius:10px;
+      background:#0f1e33;
+      color:var(--text);
+      outline:none;
+    }
+    textarea:focus { border-color:var(--accent); }
+    button {
+      margin-top:18px;
+      padding:14px 26px;
+      font-size:15px;
+      font-weight:600;
+      letter-spacing:.5px;
+      border:none;
+      border-radius:10px;
+      background:linear-gradient(135deg,var(--accent),#6366f1);
+      color:#fff;
+      cursor:pointer;
+      transition:.18s;
+      box-shadow:0 4px 14px -4px #1d4ed8;
+    }
+    button:hover {
+      transform:translateY(-2px);
+      background:linear-gradient(135deg,var(--accent-hover),#4f46e5);
+    }
+    .tips {
+      max-width:760px;
+      margin:0 auto 30px;
+      background:#13263f;
+      padding:22px 28px;
+      border-left:5px solid var(--accent);
+      border-radius:12px;
+      line-height:1.45;
+    }
+    .tips h3 { margin:0 0 12px; font-size:19px; }
+    .tips ul { margin:0; padding-left:20px; }
+    .tips li { margin-bottom:6px; }
+    .error {
+      color:var(--danger);
+      margin-top:12px;
+      font-weight:600;
+    }
+    footer {
+      margin-top:40px;
+      text-align:center;
+      font-size:13px;
+      color:var(--muted);
+    }
+    footer span { color:var(--accent); font-weight:600; }
+  </style>
 </head>
 <body>
-<h2>Fake Job Detection System</h2>
+  <h2>Fake Job Detection System</h2>
 
-<script>
-function validateForm(evt){
-  const ta = document.getElementById('job_description');
-  const text = ta.value.trim();
-  if(!text){
-    alert("Description cannot be empty.");
-    evt.preventDefault();
-    return;
-  }
-  if(text.split(/\s+/).length < 5){
-    alert("Please enter at least 5 words.");
-    evt.preventDefault();
-    return;
-  }
-  const letters = (text.match(/[A-Za-z]/g) || []).length;
-  const ratio = letters / text.length;
-  if(ratio < 0.40){
-    alert("Input looks non-text (too many numbers/symbols).");
-    evt.preventDefault();
-  }
-}
-</script>
-
-<div style="max-width:760px;margin:0 auto 20px;display:flex;gap:18px;">
-  <div style="flex:1;background:#13263f;padding:14px 18px;border-radius:10px;">
-    <strong>Fake Predictions</strong><br>{{ fake or 0 }}
+  <div style="max-width:760px;margin:0 auto 10px;text-align:right;">
+    <a href="/history" style="text-decoration:none;">
+      <button type="button" style="background:#6366f1;padding:10px 18px;border:none;border-radius:8px;color:#fff;cursor:pointer;">
+        View History
+      </button>
+    </a>
   </div>
-  <div style="flex:1;background:#13263f;padding:14px 18px;border-radius:10px;">
-    <strong>Real Predictions</strong><br>{{ real or 0 }}
+
+  <script>
+    function validateForm(evt) {
+      const ta = document.getElementById('job_description');
+      const text = ta.value.trim();
+      if (!text) {
+        alert("Description cannot be empty.");
+        evt.preventDefault();
+        return;
+      }
+      if (text.split(/\s+/).length < 5) {
+        alert("Please enter at least 5 words.");
+        evt.preventDefault();
+        return;
+      }
+      const letters = (text.match(/[A-Za-z]/g) || []).length;
+      const ratio = letters / text.length;
+      if (ratio < 0.40) {
+        alert("Input looks non-text (too many numbers/symbols).");
+        evt.preventDefault();
+      }
+    }
+  </script>
+
+  <div style="max-width:760px;margin:0 auto 20px;display:flex;gap:18px;">
+    <div style="flex:1;background:#13263f;padding:14px 18px;border-radius:10px;">
+      <strong>Fake Predictions</strong><br>{{ fake or 0 }}
+    </div>
+    <div style="flex:1;background:#13263f;padding:14px 18px;border-radius:10px;">
+      <strong>Real Predictions</strong><br>{{ real or 0 }}
+    </div>
   </div>
-</div>
 
-{% if last_label %}
-<div style="max-width:760px;margin:0 auto 24px;background:#13263f;padding:20px 24px;border-radius:12px;">
-  <h3 style="margin-top:0;">Last Prediction Result</h3>
-  <p>
-    <span style="
-      display:inline-block;padding:8px 16px;border-radius:8px;font-weight:600;
-      background:
-        {% if last_label == 'Fake Job' %}
-          linear-gradient(135deg,#dc2626,#ef4444)
-        {% else %}
-          linear-gradient(135deg,#16a34a,#22c55e)
-        {% endif %};
-      ">
-      {{ last_label }}
-    </span>
-  </p>
-  <label style="font-size:14px;">Confidence:</label>
-  <progress value="{{ last_confidence }}" max="100" style="width:100%;height:20px;"></progress>
-  <div style="text-align:right;font-size:12px;margin-top:4px;">{{ last_confidence }}%</div>
-  <details style="margin-top:10px;">
-    <summary style="cursor:pointer;">Show last description</summary>
-    <div style="margin-top:8px;font-size:13px;line-height:1.4;white-space:pre-wrap;">{{ last_text }}</div>
-  </details>
-</div>
-{% endif %}
+  {% if last_label %}
+  <div style="max-width:760px;margin:0 auto 24px;background:#13263f;padding:20px 24px;border-radius:12px;">
+    <h3 style="margin-top:0;">Last Prediction Result</h3>
+    <p>
+      <span style="
+        display:inline-block;padding:8px 16px;border-radius:8px;font-weight:600;
+        background:
+          {% if last_label == 'Fake Job' %}
+            linear-gradient(135deg,#dc2626,#ef4444)
+          {% else %}
+            linear-gradient(135deg,#16a34a,#22c55e)
+          {% endif %};
+        ">
+        {{ last_label }}
+      </span>
+    </p>
+    <label style="font-size:14px;">Confidence:</label>
+    <progress value="{{ last_confidence }}" max="100" style="width:100%;height:20px;"></progress>
+    <div style="text-align:right;font-size:12px;margin-top:4px;">{{ last_confidence }}%</div>
+    <details style="margin-top:10px;">
+      <summary style="cursor:pointer;">Show last description</summary>
+      <div style="margin-top:8px;font-size:13px;line-height:1.4;white-space:pre-wrap;">{{ last_text }}</div>
+    </details>
+  </div>
+  {% endif %}
 
-<form action="/predict" method="POST" onsubmit="validateForm(event)">
-  <label for="job_description"><b>Enter Job Description:</b></label><br><br>
-  <textarea name="job_description" id="job_description" placeholder="Paste job post text here..." required></textarea><br>
-  <button type="submit">Check Authenticity</button>
-  {% if error %}
+  <form action="/predict" method="POST" onsubmit="validateForm(event)">
+    <label for="job_description"><b>Enter Job Description:</b></label><br><br>
+    <textarea name="job_description" id="job_description" placeholder="Paste job post text here..." required></textarea><br>
+    <button type="submit">Check Authenticity</button>
+    {% if error %}
     <div style="margin-top:14px;padding:12px 16px;border-radius:10px;background:#2d3a4d;border:1px solid #dc2626;color:#fca5a5;font-weight:600;">
       ⚠ {{ error }}
     </div>
-  {% endif %}
-</form>
+    {% endif %}
+  </form>
 
-<div class="tips">
-  <h3>Tips to Identify Fake Jobs</h3>
-  <ul>
-    <li>Unrealistic salary or “earn $$$ fast” phrasing.</li>
-    <li>Requests for payment (training, onboarding, equipment).</li>
-    <li>Generic emails (gmail/yahoo) for official communication.</li>
-    <li>Pressure tactics: “Apply immediately”, “Limited slots”.</li>
-    <li>Poor grammar, vague role responsibilities.</li>
-    <li>Asking for personal documents early (ID, bank details).</li>
-  </ul>
-</div>
+  <div class="tips">
+    <h3>Tips to Identify Fake Jobs</h3>
+    <ul>
+      <li>Unrealistic salary or “earn $$$ fast” phrasing.</li>
+      <li>Requests for payment (training, onboarding, equipment).</li>
+      <li>Generic emails (gmail/yahoo) for official communication.</li>
+      <li>Pressure tactics: “Apply immediately”, “Limited slots”.</li>
+      <li>Poor grammar, vague role responsibilities.</li>
+      <li>Asking for personal documents early (ID, bank details).</li>
+    </ul>
+  </div>
 
-<footer>
-  <div>Project: <span>Fake Job Posting Detector</span> | Team: <span>Your Team Name</span> | Author: <span>Your Name</span></div>
-</footer>
+  <footer>
+    <div>
+      Project: <span>Fake Job Posting Detector</span> |
+      Team: <span>Your Team Name</span> |
+      Author: <span>Your Name</span>
+    </div>
+  </footer>
 </body>
 </html>
