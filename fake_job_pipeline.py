@@ -305,8 +305,11 @@ print("\nSaved RF top-features chart to 'rf_top15_features.png'.")
 print("\n=== Part 4.3: Cross-Validation (5-fold) ===")
 skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
 
-# Densifier for tree-based models to handle sparse TF-IDF safely
-to_dense = FunctionTransformer(lambda X: X.toarray() if hasattr(X, "toarray") else X, accept_sparse=True)
+# Densifier: named function instead of lambda (for pickling)
+def densify(X):
+    return X.toarray() if hasattr(X, "toarray") else X
+
+to_dense = FunctionTransformer(densify, accept_sparse=True)
 
 cv_models = {
     "LogisticRegression": LogisticRegression(max_iter=1000, class_weight='balanced'),
@@ -384,17 +387,19 @@ dt_pipe = make_pipeline(
     DecisionTreeClassifier(class_weight='balanced', random_state=42)
 )
 param_grid = {
-    "decisiontreeclassifier__max_depth": [5, 10, 20, 30, None],
-    "decisiontreeclassifier__min_samples_split": [2, 5, 10, 20],
-    "decisiontreeclassifier__criterion": ["gini", "entropy"]
+    "decisiontreeclassifier__max_depth": [10, 20, None],
+    "decisiontreeclassifier__min_samples_split": [2, 10],
+    "decisiontreeclassifier__criterion": ["gini"]
 }
 grid = GridSearchCV(
     estimator=dt_pipe,
     param_grid=param_grid,
     scoring="accuracy",
-    cv=skf,
-    n_jobs=-1
+    cv=3,  # reduce folds to 3
+    n_jobs=-1,
+    verbose=1
 )
+print("Fitting GridSearchCV with 3×2×1=6 candidates × 3 folds (faster)...")
 grid.fit(X_train, y_train)
 best_dt_tuned = grid.best_estimator_
 print(f"Best DT params: {grid.best_params_}, CV mean acc={grid.best_score_:.4f}")
@@ -402,12 +407,11 @@ print(f"Best DT params: {grid.best_params_}, CV mean acc={grid.best_score_:.4f}"
 joblib.dump(best_dt_tuned, 'fake_job_model_dt_tuned.pkl')
 print("Saved tuned DecisionTree -> fake_job_model_dt_tuned.pkl")
 
-# Compare tuned DT with RF on test accuracy
 tuned_dt_acc = accuracy_score(y_test, best_dt_tuned.predict(X_test))
 rf_acc = accuracy_score(y_test, best_rf_model.predict(X_test))
 print(f"Tuned Decision Tree test accuracy: {tuned_dt_acc:.4f}")
 print(f"Random Forest test accuracy:       {rf_acc:.4f}")
-print("Tuning typically increases depth control and split quality, reducing overfitting and improving generalization. Even with tuning, RF often remains stronger due to ensembling. Gains depend on data complexity and class imbalance.")
+print("Reduced grid for speed. Full tuning can be done offline if needed.")
 
 # Short guidance for interpretation (printed)
 print("\nInterpretation tips:")
