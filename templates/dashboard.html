@@ -9,35 +9,42 @@
 :root[data-theme="dark"] {
   --bg:#0f172a; --surface:#1e293b; --card:#334155; --accent:#3b82f6;
   --text:#f1f5f9; --muted:#94a3b8; --border:#475569; --hover:#1d4ed8;
-  --fake:#dc2626; --real:#16a34a;
+  --fake:#dc2626; --real:#16a34a; --shadow:rgba(0,0,0,.4);
 }
 :root[data-theme="light"] {
-  --bg:#f8fafc; --surface:#ffffff; --card:#e2e8f0; --accent:#2563eb;
-  --text:#0f172a; --muted:#64748b; --border:#cbd5e1; --hover:#1e40af;
-  --fake:#dc2626; --real:#16a34a;
+  --bg:#f1f5f9; --surface:#ffffff; --card:#e2e8f0; --accent:#2563eb; 
+  --text:#0f172a; --muted:#475569; --border:#cbd5e1; --hover:#1e40af;
+  --fake:#dc2626; --real:#16a34a; --shadow:rgba(0,0,0,.08);
 }
 * { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:"Inter",sans-serif; background:var(--bg); color:var(--text); }
-.header { background:var(--surface); border-bottom:1px solid var(--border); padding:16px 24px; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:10; box-shadow:0 2px 8px rgba(0,0,0,.08); }
+body { font-family:"Inter",sans-serif; background:var(--bg); color:var(--text); transition:background .3s, color .3s; }
+.header { background:var(--surface); border-bottom:1px solid var(--border); padding:16px 24px; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:10; box-shadow:0 2px 8px var(--shadow); }
 .brand { font-size:20px; font-weight:700; color:var(--accent); }
 nav { display:flex; gap:12px; align-items:center; }
-.btn { padding:10px 16px; border:none; border-radius:10px; font-weight:600; font-size:14px; cursor:pointer; background:var(--card); color:var(--text); transition:.2s; text-decoration:none; display:inline-block; }
-.btn:hover { background:var(--border); }
-.btn-danger { background:var(--fake); color:#fff; }
+.btn { padding:10px 16px; border:1px solid var(--border); border-radius:10px; font-weight:600; font-size:14px; cursor:pointer; background:var(--surface); color:var(--text); transition:.2s; text-decoration:none; display:inline-block; }
+.btn:hover { background:var(--card); }
+.btn-danger { background:var(--fake); color:#fff; border-color:var(--fake); }
 .btn-danger:hover { opacity:.9; }
-.theme-toggle { background:var(--card); border:1px solid var(--border); padding:8px 12px; border-radius:8px; cursor:pointer; font-size:18px; }
-.container { max-width:1150px; margin:38px auto; padding:0 24px; }
+.theme-toggle { background:var(--surface); border:1px solid var(--border); padding:8px 12px; border-radius:8px; cursor:pointer; font-size:18px; transition:.2s; }
+.theme-toggle:hover { background:var(--card); }
+.container { max-width:1300px; margin:38px auto; padding:0 24px; }
 h1 { font-size:30px; margin-bottom:24px; }
 .grid { display:grid; gap:22px; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); margin-bottom:38px; }
-.card { background:var(--surface); padding:22px 24px; border-radius:16px; border:1px solid var(--border); box-shadow:0 4px 16px -6px rgba(0,0,0,.4); }
+.card { background:var(--surface); padding:22px 24px; border-radius:16px; border:1px solid var(--border); box-shadow:0 4px 16px -6px var(--shadow); transition:.2s; }
+.card:hover { transform:translateY(-2px); box-shadow:0 8px 24px -8px var(--shadow); }
 .card .label { font-size:12px; text-transform:uppercase; letter-spacing:.6px; color:var(--muted); }
 .card .value { font-size:36px; font-weight:700; margin-top:8px; }
 .badge { display:inline-block; padding:6px 12px; border-radius:8px; font-weight:600; font-size:12px; color:#fff; margin-top:10px; }
 .badge.fake { background:var(--fake); }
 .badge.real { background:var(--real); }
-.chart-box { background:var(--surface); padding:28px 30px; border-radius:20px; border:1px solid var(--border); margin-bottom:34px; }
-.chart-box h3 { margin:0 0 18px; font-size:18px; }
+.charts-row { display:grid; grid-template-columns:40% 60%; gap:24px; margin-bottom:34px; align-items:start; }
+.chart-box { background:var(--surface); padding:28px 30px; border-radius:20px; border:1px solid var(--border); box-shadow:0 4px 16px -6px var(--shadow); }
+.chart-box h3 { margin:0 0 20px; font-size:18px; }
+.chart-box canvas { max-height:400px; }
 footer { text-align:center; padding:32px 0 24px; font-size:13px; color:var(--muted); }
+@media (max-width: 968px) {
+  .charts-row { grid-template-columns: 1fr; }
+}
 </style>
 </head>
 <body>
@@ -70,14 +77,16 @@ footer { text-align:center; padding:32px 0 24px; font-size:13px; color:var(--mut
     </div>
   </div>
 
-  <div class="chart-box">
-    <h3>Fake vs Real Distribution</h3>
-    <canvas id="pieChart"></canvas>
-  </div>
+  <div class="charts-row">
+    <div class="chart-box">
+      <h3>Fake vs Real Distribution</h3>
+      <canvas id="pieChart"></canvas>
+    </div>
 
-  <div class="chart-box">
-    <h3>Predictions Over Time</h3>
-    <canvas id="lineChart"></canvas>
+    <div class="chart-box">
+      <h3>Predictions Over Time</h3>
+      <canvas id="lineChart"></canvas>
+    </div>
   </div>
 </div>
 
@@ -90,40 +99,144 @@ function toggleTheme(){
   const nxt=h.getAttribute('data-theme')==='dark'?'light':'dark';
   h.setAttribute('data-theme',nxt);
   localStorage.setItem('theme',nxt);
+  updateCharts();
 }
-document.documentElement.setAttribute('data-theme',localStorage.getItem('theme')||'dark');
 
-new Chart(document.getElementById('pieChart'), {
-  type:'pie',
-  data:{
-    labels:['Fake','Real'],
-    datasets:[{ data:[{{ fake }}, {{ real }}], backgroundColor:['#dc2626','#16a34a'] }]
-  },
-  options:{ plugins:{ legend:{ labels:{ color:getComputedStyle(document.documentElement).getPropertyValue('--text') }}}}
-});
+const saved = localStorage.getItem('theme')||'dark';
+document.documentElement.setAttribute('data-theme',saved);
 
-new Chart(document.getElementById('lineChart'), {
-  type:'line',
-  data:{
-    labels: {{ dates | tojson }},
-    datasets:[{
-      label:'Predictions Per Day',
-      data: {{ counts | tojson }},
-      borderColor:getComputedStyle(document.documentElement).getPropertyValue('--accent'),
-      backgroundColor:'rgba(59,130,246,0.15)',
-      fill:true,
-      tension:.3,
-      borderWidth:2
-    }]
-  },
-  options:{
-    plugins:{ legend:{ labels:{ color:getComputedStyle(document.documentElement).getPropertyValue('--text') }}},
-    scales:{
-      x:{ ticks:{ color:getComputedStyle(document.documentElement).getPropertyValue('--muted') }, grid:{ color:getComputedStyle(document.documentElement).getPropertyValue('--border') }},
-      y:{ ticks:{ color:getComputedStyle(document.documentElement).getPropertyValue('--muted') }, grid:{ color:getComputedStyle(document.documentElement).getPropertyValue('--border') }}
+let pieChart, lineChart;
+
+function getChartColors() {
+  const style = getComputedStyle(document.documentElement);
+  return {
+    text: style.getPropertyValue('--text').trim(),
+    muted: style.getPropertyValue('--muted').trim(),
+    border: style.getPropertyValue('--border').trim(),
+    accent: style.getPropertyValue('--accent').trim(),
+    bg: style.getPropertyValue('--bg').trim()
+  };
+}
+
+function createCharts() {
+  const colors = getChartColors();
+  
+  if (pieChart) pieChart.destroy();
+  if (lineChart) lineChart.destroy();
+
+  pieChart = new Chart(document.getElementById('pieChart'), {
+    type:'pie',
+    data:{
+      labels:['Fake Jobs','Real Jobs'],
+      datasets:[{ 
+        data:[{{ fake }}, {{ real }}], 
+        backgroundColor:['#dc2626','#16a34a'],
+        borderWidth: 2,
+        borderColor: colors.bg
+      }]
+    },
+    options:{ 
+      responsive: true,
+      maintainAspectRatio: true,
+      aspectRatio: 1.2,
+      plugins:{ 
+        legend:{ 
+          position: 'bottom',
+          labels:{ 
+            color: colors.text,
+            font: { size: 14, family: 'Inter', weight: '500' },
+            padding: 18
+          }
+        },
+        tooltip: {
+          titleColor: colors.text,
+          bodyColor: colors.text,
+          backgroundColor: colors.bg,
+          borderColor: colors.border,
+          borderWidth: 1
+        }
+      }
     }
-  }
-});
+  });
+
+  lineChart = new Chart(document.getElementById('lineChart'), {
+    type:'line',
+    data:{
+      labels: {{ dates | tojson }},
+      datasets:[{
+        label:'Predictions Per Day',
+        data: {{ counts | tojson }},
+        borderColor: colors.accent,
+        backgroundColor: colors.accent + '20',
+        fill:true,
+        tension:.3,
+        borderWidth:3,
+        pointBackgroundColor: colors.accent,
+        pointBorderColor: colors.bg,
+        pointBorderWidth: 3,
+        pointRadius: 5,
+        pointHoverRadius: 7
+      }]
+    },
+    options:{
+      responsive: true,
+      maintainAspectRatio: true,
+      aspectRatio: 2,
+      plugins:{ 
+        legend:{ 
+          position: 'top',
+          labels:{ 
+            color: colors.text,
+            font: { size: 14, family: 'Inter', weight: '500' },
+            padding: 18
+          }
+        },
+        tooltip: {
+          titleColor: colors.text,
+          bodyColor: colors.text,
+          backgroundColor: colors.bg,
+          borderColor: colors.border,
+          borderWidth: 1,
+          padding: 12,
+          titleFont: { size: 13, weight: '600' },
+          bodyFont: { size: 13 }
+        }
+      },
+      scales:{
+        x:{ 
+          ticks:{ 
+            color: colors.muted,
+            font: { size: 13, family: 'Inter' },
+            padding: 8
+          }, 
+          grid:{ 
+            color: colors.border,
+            drawBorder: false
+          }
+        },
+        y:{ 
+          beginAtZero: true,
+          ticks:{ 
+            stepSize: 1,
+            color: colors.muted,
+            font: { size: 13, family: 'Inter' },
+            padding: 8
+          }, 
+          grid:{ 
+            color: colors.border,
+            drawBorder: false
+          }
+        }
+      }
+    }
+  });
+}
+
+function updateCharts() {
+  createCharts();
+}
+
+createCharts();
 </script>
 </body>
 </html>

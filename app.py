@@ -124,21 +124,31 @@ def admin_dashboard():
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     
-    # Fake vs Real Count
     fake_count = cursor.execute("SELECT COUNT(*) FROM predictions WHERE prediction='Fake Job'").fetchone()[0]
     real_count = cursor.execute("SELECT COUNT(*) FROM predictions WHERE prediction='Real Job'").fetchone()[0]
     total = fake_count + real_count
     
-    # Daily Count (group by date)
+    # Daily count with proper date formatting
     daily_data = cursor.execute("""
-        SELECT DATE(timestamp), COUNT(*)
+        SELECT DATE(timestamp) as day, COUNT(*) as cnt
         FROM predictions
         GROUP BY DATE(timestamp)
         ORDER BY DATE(timestamp)
     """).fetchall()
     
-    dates = [row[0] for row in daily_data]
-    counts = [row[1] for row in daily_data]
+    # Ensure at least 2 points for line chart (pad with zero if needed)
+    if len(daily_data) == 0:
+        dates, counts = [], []
+    elif len(daily_data) == 1:
+        # Add a dummy previous day with 0
+        from datetime import datetime, timedelta
+        single_date = datetime.strptime(daily_data[0][0], '%Y-%m-%d')
+        prev_date = (single_date - timedelta(days=1)).strftime('%Y-%m-%d')
+        dates = [prev_date, daily_data[0][0]]
+        counts = [0, daily_data[0][1]]
+    else:
+        dates = [row[0] for row in daily_data]
+        counts = [row[1] for row in daily_data]
     
     conn.close()
     
