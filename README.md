@@ -170,12 +170,7 @@ This is a learning/demo tool. False positives/negatives can occur. Always manual
 
 ---
 
-## 14. License
-Add an MIT or Apache 2.0 license file if publishing publicly.
-
----
-
-## 15. Summary
+## 14. Summary
 You learn:
 - Text preprocessing pipeline.
 - Model training and evaluation.
