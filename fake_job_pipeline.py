@@ -315,7 +315,7 @@ cv_models = {
     "LogisticRegression": LogisticRegression(max_iter=1000, class_weight='balanced'),
     "DecisionTree": make_pipeline(to_dense, DecisionTreeClassifier(class_weight='balanced', random_state=42)),
     "RandomForest": make_pipeline(to_dense, RandomForestClassifier(n_estimators=200, class_weight='balanced', random_state=42, n_jobs=-1))
-}
+}   
 
 cv_stats = []
 for name, clf in cv_models.items():
