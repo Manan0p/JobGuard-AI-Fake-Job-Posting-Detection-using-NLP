@@ -1,77 +1,360 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Training Logs</title>
+  <title>Training Logs • JobGuard AI</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root[data-theme="dark"] {
+      --bg:#0f172a; --surface:#1e293b; --card:#0b1323; --accent:#3b82f6;
+      --text:#f1f5f9; --muted:#94a3b8; --border:#475569; --hover:#1d4ed8;
+      --success:#10b981; --warning:#f59e0b; --shadow:rgba(0,0,0,.45);
+    }
+    :root[data-theme="light"] {
+      --bg:#f8fafc; --surface:#ffffff; --card:#eef2ff; --accent:#2563eb;
+      --text:#0f172a; --muted:#475569; --border:#e5e7eb; --hover:#1d4ed8;
+      --success:#059669; --warning:#d97706; --shadow:rgba(0,0,0,.12);
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:"Inter",system-ui,-apple-system,Segoe UI,sans-serif; background:var(--bg); color:var(--text); }
 
-<style>
-  :root { color-scheme: dark; }
-  body { margin: 0; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: #0f172a; color: #e5e7eb; }
-  .wrapper { max-width: 1100px; margin: 28px auto; padding: 0 20px; }
-  .card { background: #1e293b; border: 1px solid #475569; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 16px -6px rgba(0,0,0,.4); }
-  .card-header { padding: 16px 18px; border-bottom: 1px solid #475569; display: flex; align-items: center; justify-content: space-between; }
-  .title { margin: 0; font-size: 18px; font-weight: 700; display: flex; gap: 10px; align-items: center; }
-  .actions { display: flex; gap: 10px; }
-  .btn { border: 1px solid #475569; background: #1e293b; color: #e5e7eb; border-radius: 10px; padding: 10px 14px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: .15s; font-weight: 600; }
-  .btn:hover { background: #334155; }
-  .btn.primary { background: #3b82f6; border-color: #1d4ed8; color: #fff; }
-  .btn.primary:hover { filter: brightness(1.05); }
-  .table-wrap { width: 100%; overflow: auto; }
-  table { width: 100%; border-collapse: collapse; min-width: 720px; }
-  thead th { background: #0b1323; color: #cbd5e1; font-weight: 600; text-align: left; padding: 12px 14px; border-bottom: 1px solid #475569; position: sticky; top: 0; z-index: 1; }
-  tbody td { padding: 12px 14px; border-bottom: 1px solid #475569; color: #e5e7eb; }
-  tbody tr:hover { background: rgba(59, 130, 246, 0.10); }
-  .muted { color: #9ca3af; }
-  .footer { padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; color: #9ca3af; }
-  .empty { padding: 22px; color: #cbd5e1; }
-  .badge { display: inline-block; padding: 6px 10px; border-radius: 999px; background: #111827; border: 1px solid #374151; font-size: 0.85rem; color: #cbd5e1; }
-</style>
+    /* Header */
+    header { position:sticky; top:0; z-index:50; background:var(--surface); border-bottom:1px solid var(--border); box-shadow:0 3px 14px var(--shadow); backdrop-filter:blur(6px); }
+    .nav { max-width:1440px; margin:0 auto; padding:20px 36px; display:flex; align-items:center; justify-content:space-between; }
+    .brand { font-weight:800; color:var(--accent); font-size:22px; display:flex; align-items:center; gap:12px; text-decoration:none; }
+    .brand .pulse { width:10px; height:10px; border-radius:50%; background:var(--accent); animation:pulse 2s infinite; }
+    @keyframes pulse { 0%{box-shadow:0 0 0 0 rgba(59,130,246,0.7);} 70%{box-shadow:0 0 0 12px rgba(59,130,246,0);} 100%{box-shadow:0 0 0 0 rgba(59,130,246,0);} }
+    .nav-actions { display:flex; gap:12px; flex-wrap:wrap; }
+    .btn { padding:12px 16px; border-radius:12px; border:1px solid var(--border); background:var(--surface); color:var(--text); text-decoration:none; font-weight:700; font-size:14px; transition:all .12s ease; cursor:pointer; }
+    .btn:hover { background:var(--card); transform:translateY(-1px); }
+    .btn.primary { background:var(--accent); color:#fff; border-color:var(--hover); }
+    .btn.primary:hover { filter:brightness(1.05); }
 
+    /* Container */
+    .container { max-width:1440px; margin:0 auto; padding:0 36px; }
+
+    /* Page header */
+    .page-header { padding:60px 0 40px; }
+    .page-title { font-size:48px; font-weight:900; margin:0 0 12px; letter-spacing:.3px; }
+    .page-subtitle { color:var(--muted); font-size:16px; margin-bottom:24px; }
+
+    /* Stats bar */
+    .stats-bar { display:grid; grid-template-columns:repeat(auto-fit, minmax(200px,1fr)); gap:16px; margin-bottom:48px; }
+    .stat-box { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:20px; }
+    .stat-label { color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:.3px; }
+    .stat-value { font-size:32px; font-weight:900; margin-top:8px; color:var(--accent); }
+    .stat-icon { font-size:24px; margin-bottom:8px; }
+
+    /* Chart section */
+    .chart-section { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:32px; margin-bottom:48px; box-shadow:0 8px 26px -6px var(--shadow); }
+    .chart-title { font-size:20px; font-weight:800; margin:0 0 24px; }
+    .chart-container { position:relative; height:350px; }
+
+    /* Logs table */
+    .logs-section { margin-bottom:48px; }
+    .logs-title { font-size:28px; font-weight:900; margin:0 0 24px; }
+    .table-container { background:var(--surface); border:1px solid var(--border); border-radius:16px; overflow:hidden; box-shadow:0 8px 26px -6px var(--shadow); }
+    table { width:100%; border-collapse:collapse; }
+    thead { background:var(--card); }
+    th { padding:16px; font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:.4px; color:var(--muted); text-align:left; }
+    td { padding:16px; border-bottom:1px solid var(--border); }
+    tbody tr:hover { background:var(--card); }
+    tbody tr:last-child td { border-bottom:none; }
+
+    /* Badge */
+    .badge { display:inline-flex; align-items:center; gap:6px; padding:8px 14px; border-radius:10px; font-weight:700; font-size:13px; }
+    .badge.success { background:rgba(16,185,129,.15); color:var(--success); border:1px solid rgba(16,185,129,.3); }
+    .badge.warning { background:rgba(245,158,11,.15); color:var(--warning); border:1px solid rgba(245,158,11,.3); }
+
+    /* Detail row */
+    .detail-row { display:flex; align-items:center; justify-content:space-between; gap:20px; }
+    .detail-info { flex:1; }
+    .detail-label { color:var(--muted); font-size:12px; text-transform:uppercase; margin-bottom:4px; }
+    .detail-value { font-weight:700; font-size:16px; }
+
+    /* Accuracy indicator */
+    .accuracy-indicator { display:flex; align-items:center; gap:12px; }
+    .accuracy-bar { flex:1; height:8px; border-radius:4px; background:var(--border); overflow:hidden; }
+    .accuracy-fill { height:100%; border-radius:4px; background:linear-gradient(90deg, var(--accent), var(--success)); }
+    .accuracy-text { font-weight:800; font-size:16px; color:var(--accent); }
+
+    /* Empty state */
+    .empty-state { text-align:center; padding:80px 24px; }
+    .empty-icon { font-size:64px; margin-bottom:20px; }
+    .empty-text { font-size:20px; font-weight:700; margin-bottom:8px; }
+    .empty-subtext { color:var(--muted); font-size:14px; margin-bottom:24px; }
+
+    /* Filter & Search */
+    .controls { display:flex; gap:12px; margin-bottom:32px; flex-wrap:wrap; }
+    .search-box { flex:1; min-width:200px; }
+    .search-box input { width:100%; padding:12px 16px; border-radius:12px; border:1px solid var(--border); background:var(--surface); color:var(--text); font-size:14px; outline:none; transition:border .12s ease; }
+    .search-box input:focus { border-color:var(--accent); }
+
+    /* Pagination */
+    .pagination { display:flex; gap:8px; justify-content:center; margin-top:24px; }
+    .pag-btn { padding:8px 12px; border-radius:8px; border:1px solid var(--border); background:var(--surface); color:var(--text); cursor:pointer; transition:all .12s ease; }
+    .pag-btn:hover { background:var(--card); }
+    .pag-btn.active { background:var(--accent); color:#fff; border-color:var(--accent); }
+
+    /* Footer */
+    footer { text-align:center; padding:48px 0 32px; color:var(--muted); border-top:1px solid var(--border); font-size:13px; }
+
+    /* Responsive */
+    @media (max-width:768px) {
+      .page-header { padding:40px 0 24px; }
+      .page-title { font-size:32px; }
+      .detail-row { flex-direction:column; align-items:flex-start; }
+      th, td { padding:12px 8px; font-size:12px; }
+      .stats-bar { grid-template-columns:1fr 1fr; }
+      .chart-container { height:250px; }
+    }
+  </style>
 </head>
 <body>
-  <div class="wrapper">
-    <div class="card">
-      <div class="card-header">
-        <h1 class="title">📋 Training Logs</h1>
-        <div class="actions">
-          <a href="{{ url_for('admin_dashboard') }}" class="btn">← Back to Dashboard</a>
-          <a href="{{ url_for('retrain_logs') }}" class="btn primary">↻ Refresh</a>
-        </div>
-      </div>
-
-      <div class="table-wrap">
-        {% if logs %}
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Date</th>
-              <th>Accuracy</th>
-              <th>Training Source</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for log in logs %}
-            <tr>
-              <td class="muted">#{{ log['id'] }}</td>
-              <td>{{ log['timestamp'] }}</td>
-              <td><span class="badge">{{ "%.2f"|format(log['accuracy']) }}%</span></td>
-              <td>{{ log['training_source'] }}</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-        {% else %}
-          <div class="empty">No training logs available yet.</div>
-        {% endif %}
-      </div>
-
-      <div class="footer">
-        <div>Showing {{ logs|length if logs else 0 }} record(s)</div>
-        <div>JobGuard AI • Admin</div>
+  <!-- Header -->
+  <header>
+    <div class="nav">
+      <a href="{{ url_for('home') }}" class="brand"><span class="pulse"></span> JobGuard AI</a>
+      <div class="nav-actions">
+        <button class="btn" id="themeToggle" onclick="toggleTheme()">🌓</button>
+        <a href="{{ url_for('home') }}" class="btn">Home</a>
+        <a href="{{ url_for('admin_dashboard') }}" class="btn">Dashboard</a>
+        <a href="{{ url_for('logout') }}" class="btn">Logout</a>
       </div>
     </div>
+  </header>
+
+  <!-- Main content -->
+  <div class="container">
+    <!-- Page header -->
+    <div class="page-header">
+      <h1 class="page-title">📋 Training Logs</h1>
+      <p class="page-subtitle">Model retraining history and performance metrics</p>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-bar">
+      <div class="stat-box">
+        <div class="stat-icon">📊</div>
+        <div class="stat-label">Total Retrains</div>
+        <div class="stat-value">{{ logs|length }}</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-icon">📈</div>
+        <div class="stat-label">Avg Accuracy</div>
+        <div class="stat-value">
+          {% if logs %}
+            {% set avg = (logs|map(attribute='accuracy')|sum) / (logs|length) %}
+            {{ "%.2f"|format(avg) }}%
+          {% else %}
+            —
+          {% endif %}
+        </div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-icon">🎯</div>
+        <div class="stat-label">Best Accuracy</div>
+        <div class="stat-value">
+          {% if logs %}
+            {{ "%.2f"|format(logs|map(attribute='accuracy')|max) }}%
+          {% else %}
+            —
+          {% endif %}
+        </div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-icon">⏱️</div>
+        <div class="stat-label">Latest Training</div>
+        <div class="stat-value">
+          {% if logs %}
+            {{ logs[0]['timestamp'][:11] }}
+          {% else %}
+            Never
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Chart -->
+    {% if logs %}
+    <div class="chart-section">
+      <div class="chart-title">📈 Accuracy Trend Over Time</div>
+      <div class="chart-container">
+        <canvas id="accuracyChart"></canvas>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Controls -->
+    <div class="controls">
+      <div class="search-box">
+        <input type="text" id="searchInput" placeholder="🔍 Search by source..." onkeyup="filterLogs()">
+      </div>
+    </div>
+
+    <!-- Logs table -->
+    <div class="logs-section">
+      <div class="logs-title">📋 All Training Sessions</div>
+      {% if logs and logs|length > 0 %}
+        <div class="table-container">
+          <table id="logsTable">
+            <thead>
+              <tr>
+                <th style="min-width:140px;">Date & Time</th>
+                <th style="min-width:120px;">Accuracy</th>
+                <th>Training Source</th>
+                <th style="min-width:100px;">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for log in logs %}
+              <tr class="log-row" data-source="{{ log['training_source'].lower() }}">
+                <td>
+                  <span style="color:var(--text); font-weight:600;">{{ log['timestamp'] }}</span>
+                </td>
+                <td>
+                  <div class="accuracy-indicator">
+                    <div class="accuracy-bar">
+                      <div class="accuracy-fill" style="width:{{ log['accuracy'] }}%"></div>
+                    </div>
+                    <div class="accuracy-text">{{ log['accuracy'] }}%</div>
+                  </div>
+                </td>
+                <td>
+                  <span style="color:var(--muted);">{{ log['training_source'] }}</span>
+                </td>
+                <td>
+                  {% if log['accuracy'] >= 95 %}
+                    <span class="badge success">✓ Excellent</span>
+                  {% elif log['accuracy'] >= 90 %}
+                    <span class="badge success">✓ Good</span>
+                  {% else %}
+                    <span class="badge warning">⚠️ Fair</span>
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Summary card -->
+        <div style="background:var(--card); border:1px solid var(--border); border-radius:16px; padding:24px; margin-top:24px; display:grid; grid-template-columns:repeat(auto-fit, minmax(250px,1fr)); gap:20px;">
+          <div>
+            <div style="color:var(--muted); font-size:12px; text-transform:uppercase; margin-bottom:8px;">Performance Summary</div>
+            <div style="font-size:16px; color:var(--text);">
+              {% set latest = logs[0]['accuracy'] %}
+              {% if logs|length > 1 %}
+                {% set previous = logs[1]['accuracy'] %}
+                Latest: <strong>{{ latest }}%</strong>
+                {% if latest > previous %}
+                  <span style="color:var(--success);">↑ +{{ latest - previous }}%</span>
+                {% elif latest < previous %}
+                  <span style="color:#dc2626;">↓ -{{ previous - latest }}%</span>
+                {% else %}
+                  <span style="color:var(--muted);">No change</span>
+                {% endif %}
+              {% else %}
+                Latest: <strong>{{ latest }}%</strong>
+              {% endif %}
+            </div>
+          </div>
+          <div>
+            <div style="color:var(--muted); font-size:12px; text-transform:uppercase; margin-bottom:8px;">Model Status</div>
+            <div style="font-size:16px;">
+              {% if latest >= 93 %}
+                <span style="color:var(--success);">✓ Model is performing well</span>
+              {% elif latest >= 90 %}
+                <span style="color:var(--accent);">→ Model is acceptable</span>
+              {% else %}
+                <span style="color:var(--warning);">⚠️ Consider retraining</span>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      {% else %}
+        <div class="empty-state">
+          <div class="empty-icon">📭</div>
+          <div class="empty-text">No training logs yet</div>
+          <div class="empty-subtext">Start by retraining the model on the dashboard</div>
+          <a href="{{ url_for('admin_dashboard') }}" class="btn primary" style="margin-top:16px;">Go to Dashboard</a>
+        </div>
+      {% endif %}
+    </div>
   </div>
+
+  <footer>© 2025 JobGuard AI • Training & Optimization</footer>
+
+  <script>
+    // Theme toggle
+    function toggleTheme() {
+      const html = document.documentElement;
+      const current = html.getAttribute('data-theme') || 'dark';
+      const next = current === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', next);
+      try { localStorage.setItem('jg-theme', next); } catch {}
+    }
+    (function() {
+      try {
+        const saved = localStorage.getItem('jg-theme');
+        if (saved) document.documentElement.setAttribute('data-theme', saved);
+      } catch {}
+    })();
+
+    // Filter logs
+    function filterLogs() {
+      const query = document.getElementById('searchInput').value.toLowerCase();
+      const rows = document.querySelectorAll('.log-row');
+      rows.forEach(r => {
+        r.style.display = r.dataset.source.includes(query) ? '' : 'none';
+      });
+    }
+
+    // Chart
+    const logs = {{ logs|tojson }};
+    if (logs && logs.length > 0) {
+      const dates = logs.map(l => l['timestamp'].split(',')[0]).reverse();
+      const accuracies = logs.map(l => l['accuracy']).reverse();
+
+      const darkMode = document.documentElement.getAttribute('data-theme') === 'light' ? false : true;
+      const chartBg = darkMode ? '#94a3b8' : '#475569';
+      const chartAccent = '#3b82f6';
+
+      new Chart(document.getElementById('accuracyChart'), {
+        type: 'line',
+        data: {
+          labels: dates,
+          datasets: [{
+            label: 'Model Accuracy',
+            data: accuracies,
+            borderColor: chartAccent,
+            backgroundColor: 'rgba(59,130,246,.1)',
+            tension: .4,
+            fill: true,
+            pointRadius: 6,
+            pointBackgroundColor: chartAccent,
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: {
+              min: 80,
+              max: 100,
+              ticks: { color: chartBg },
+              grid: { color: 'rgba(59,130,246,.1)' }
+            },
+            x: { ticks: { color: chartBg } }
+          }
+        }
+      });
+    }
+  </script>
 </body>
 </html>
