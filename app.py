@@ -76,31 +76,36 @@ def predict_form():
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    # Public prediction
+    # Public prediction - returns JSON for AJAX
     job_desc = request.form.get('job_description','').strip()
-    fake_jobs, real_jobs = get_counts()  # current counts for error re-render
+    
+    # Validation
     if not job_desc or len(job_desc.split()) < 5:
-        return render_template('home.html', error="Please enter ≥5 words.", total=fake_jobs+real_jobs, fake=fake_jobs, real=real_jobs)
+        return jsonify({'error': 'Please enter ≥5 words.'}), 400
+    
     letters = sum(c.isalpha() for c in job_desc)
-    if letters / max(1,len(job_desc)) < 0.40:
-        return render_template('home.html', error="Too many symbols/numbers.", total=fake_jobs+real_jobs, fake=fake_jobs, real=real_jobs)
+    if letters / max(1, len(job_desc)) < 0.40:
+        return jsonify({'error': 'Too many symbols/numbers.'}), 400
 
+    # Predict
     X = vectorizer.transform([job_desc])
     pred = model.predict(X)[0]
     prob = model.predict_proba(X)[0][1]
     label = "Fake Job" if pred == 1 else "Real Job"
-    confidence = round(prob*100,2) if pred==1 else round((1-prob)*100,2)
+    confidence = round(prob*100, 2) if pred == 1 else round((1-prob)*100, 2)
 
+    # Store in DB
     conn = sqlite3.connect(DB_PATH)
     conn.execute('INSERT INTO predictions (job_description, prediction, confidence) VALUES (?, ?, ?)',
                  (job_desc, label, confidence))
     conn.commit()
     conn.close()
 
-    # updated counts after insert
-    fake_jobs, real_jobs = get_counts()
-    return render_template('result.html', label=label, confidence=confidence, description=job_desc,
-                           fake=fake_jobs, real=real_jobs)
+    # Return JSON response
+    return jsonify({
+        'prediction': label,
+        'confidence': confidence
+    })
 
 @app.route('/history')
 def history():

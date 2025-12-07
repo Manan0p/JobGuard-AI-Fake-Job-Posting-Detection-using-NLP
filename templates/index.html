@@ -22,11 +22,11 @@
     /* Header */
     header { position:sticky; top:0; z-index:50; background:var(--surface); border-bottom:1px solid var(--border); box-shadow:0 3px 14px var(--shadow); backdrop-filter: blur(6px); }
     .nav { max-width:1440px; margin:0 auto; padding:20px 36px; display:flex; align-items:center; justify-content:space-between; }
-    .brand { font-weight:800; color:var(--accent); font-size:20px; display:flex; align-items:center; gap:10px; }
+    .brand { font-weight:800; color:var(--accent); font-size:20px; display:flex; align-items:center; gap:10px; text-decoration:none; }
     .brand .pulse { width:10px; height:10px; border-radius:50%; background:var(--accent); animation:pulse 2s infinite; }
     @keyframes pulse { 0%{box-shadow:0 0 0 0 rgba(59,130,246,0.7);} 70%{box-shadow:0 0 0 12px rgba(59,130,246,0);} 100%{box-shadow:0 0 0 0 rgba(59,130,246,0);} }
-    .nav-actions { display:flex; gap:12px; }
-    .btn { padding:12px 16px; border-radius:12px; border:1px solid var(--border); background:var(--surface); color:var(--text); text-decoration:none; font-weight:700; font-size:14px; transition:all .12s ease; }
+    .nav-actions { display:flex; gap:12px; flex-wrap:wrap; }
+    .btn { padding:12px 16px; border-radius:12px; border:1px solid var(--border); background:var(--surface); color:var(--text); text-decoration:none; font-weight:700; font-size:14px; transition:all .12s ease; cursor:pointer; }
     .btn:hover { background:var(--card); transform:translateY(-1px); }
     .btn.primary { background:var(--accent); color:#fff; border-color:var(--hover); }
     .btn.primary:hover { filter:brightness(1.05); }
@@ -47,6 +47,9 @@
     textarea { width:100%; min-height:180px; resize:vertical; border-radius:14px; border:1px solid var(--border); background:var(--card); color:var(--text); padding:16px; font-size:16px; font-family:inherit; outline:none; transition:border .12s ease; }
     textarea:focus { border-color:var(--accent); }
     .input-hint { color:var(--muted); font-size:13px; }
+
+    /* Character counter */
+    .char-counter { color:var(--muted); font-size:12px; text-align:right; margin-top:8px; }
 
     /* Action buttons */
     .action-row { display:flex; gap:12px; flex-wrap:wrap; }
@@ -86,12 +89,35 @@
     .chip.positive { background:rgba(16,185,129,.15); color:var(--real); border:1px solid rgba(16,185,129,.35); }
     .chip.negative { background:rgba(220,38,38,.15); color:var(--fake); border:1px solid rgba(220,38,38,.35); }
 
+    /* Features section */
+    .features-section { margin:48px 0; }
+    .section-title { font-size:24px; font-weight:900; margin:0 0 24px; }
+    .features-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap:20px; margin-bottom:48px; }
+    .feature-card { background:var(--surface); border:1px solid var(--border); border-radius:18px; padding:24px; transition:all .12s ease; }
+    .feature-card:hover { transform:translateY(-4px); border-color:var(--accent); }
+    .feature-icon { font-size:28px; margin-bottom:12px; }
+    .feature-card h3 { margin:0 0 8px; font-size:18px; }
+    .feature-card p { margin:0; color:var(--muted); font-size:14px; line-height:1.6; }
+
+    /* Tips section */
+    .tips-section { background:var(--card); border:1px solid var(--border); border-radius:18px; padding:24px; margin-bottom:48px; padding-bottom:48px; }
+    .tips-title { font-size:18px; font-weight:800; margin:0 0 16px; }
+    .tips-list { margin:0; padding:0 0 0 20px; }
+    .tips-list li { color:var(--muted); margin-bottom:10px; line-height:1.6; }
+    .tips-list strong { color:var(--text); }
+
     /* Info cards */
-    .info-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap:16px; margin-top:48px; }
+    .info-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap:16px; margin-top:48px; padding-bottom:48px; }
     .info-card { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:20px; }
     .info-icon { font-size:24px; margin-bottom:8px; }
     .info-card h4 { margin:0 0 8px; font-size:16px; }
     .info-card p { margin:0; color:var(--muted); font-size:14px; line-height:1.5; }
+
+    /* Quick stats */
+    .quick-stats { display:grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap:16px; margin:48px 0; }
+    .stat-card { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:20px; text-align:center; }
+    .stat-number { font-size:32px; font-weight:900; color:var(--accent); }
+    .stat-label { color:var(--muted); font-size:13px; margin-top:8px; }
 
     /* Loading state */
     .spinner { display:inline-block; width:16px; height:16px; border:2px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin .6s linear infinite; }
@@ -101,8 +127,13 @@
     .error-msg { background:rgba(220,38,38,.1); border:1px solid rgba(220,38,38,.3); color:var(--fake); border-radius:12px; padding:12px 16px; margin-bottom:16px; font-size:14px; }
     .error-msg.hidden { display:none; }
 
+    /* Success message */
+    .success-msg { background:rgba(16,185,129,.1); border:1px solid rgba(16,185,129,.3); color:var(--real); border-radius:12px; padding:12px 16px; margin-bottom:16px; font-size:14px; }
+    .success-msg.hidden { display:none; }
+
     /* Footer */
     footer { text-align:center; padding:48px 0 32px; color:var(--muted); border-top:1px solid var(--border); font-size:13px; }
+    
 
     /* Responsive */
     @media (max-width: 768px) {
@@ -114,6 +145,7 @@
       .btn-submit { width:100%; }
       .result-verdict { font-size:24px; }
       .info-grid { grid-template-columns: 1fr; }
+      .nav-actions { gap:8px; }
     }
   </style>
 </head>
@@ -121,10 +153,17 @@
   <!-- Header -->
   <header>
     <div class="nav">
-      <a href="{{ url_for('home') }}" class="brand" style="text-decoration:none;"><span class="pulse"></span> JobGuard AI</a>
+      <a href="{{ url_for('home') }}" class="brand"><span class="pulse"></span> JobGuard AI</a>
       <div class="nav-actions">
-        <button class="btn" id="themeToggle" onclick="toggleTheme()" style="cursor:pointer;">🌓</button>
+        <button class="btn" id="themeToggle" onclick="toggleTheme()">🌓</button>
         <a href="{{ url_for('home') }}" class="btn">← Back Home</a>
+        {% if session.get('admin_logged_in') %}
+          <a href="{{ url_for('admin_dashboard') }}" class="btn">Dashboard</a>
+          <a href="{{ url_for('logout') }}" class="btn">Logout</a>
+        {% else %}
+          <a href="{{ url_for('history') }}" class="btn">View History</a>
+          <a href="{{ url_for('admin_login') }}" class="btn">Login</a>
+        {% endif %}
       </div>
     </div>
   </header>
@@ -143,8 +182,11 @@
       <form id="predictForm" onsubmit="handlePredict(event)">
         <div class="input-group">
           <label class="input-label">Job Description</label>
-          <textarea id="jobText" name="job_description" placeholder="Paste the full job posting here..." required></textarea>
-          <div class="input-hint">💡 Include title, responsibilities, requirements, and any contact info from the listing.</div>
+          <textarea id="jobText" name="job_description" placeholder="Paste the full job posting here..." required oninput="updateCharCount()"></textarea>
+          <div style="display:flex; justify-content:space-between;">
+            <div class="input-hint">💡 Include title, responsibilities, requirements, and any contact info from the listing.</div>
+            <div class="char-counter"><span id="charCount">0</span> / 5000</div>
+          </div>
         </div>
 
         <div class="action-row" style="margin-top:20px;">
@@ -157,6 +199,7 @@
         </div>
 
         <div id="errorMsg" class="error-msg hidden"></div>
+        <div id="successMsg" class="success-msg hidden"></div>
       </form>
     </section>
 
@@ -194,29 +237,99 @@
 
       <div class="analysis-chips" id="analysisChips"></div>
 
-      <div style="display:flex; gap:12px; margin-top:20px;">
+      <div style="display:flex; gap:12px; margin-top:20px; flex-wrap:wrap;">
         <button class="btn btn-secondary" onclick="copyResult()">📋 Copy Result</button>
         <button class="btn btn-secondary" onclick="newAnalysis()">🔄 Analyze Another</button>
         <a href="{{ url_for('history') }}" class="btn btn-secondary">📜 View All Results</a>
       </div>
     </section>
 
+    <!-- Quick Stats -->
+    <section class="quick-stats">
+      <div class="stat-card">
+        <div class="stat-number">⚡</div>
+        <div class="stat-label">Instant Results</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">🎯</div>
+        <div class="stat-label">High Accuracy</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">🔐</div>
+        <div class="stat-label">Privacy First</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">🚀</div>
+        <div class="stat-label">Always Free</div>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section class="features-section">
+      <h2 class="section-title">🌟 Key Features</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <h3>Instant Detection</h3>
+          <p>Get results in seconds using our advanced ML model trained on thousands of job listings.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🎯</div>
+          <h3>High Accuracy</h3>
+          <p>Our model achieves industry-leading accuracy rates in detecting fraudulent postings.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <h3>Detailed Analysis</h3>
+          <p>View confidence scores and comprehensive prediction details for every analysis.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔐</div>
+          <h3>Private & Secure</h3>
+          <p>Your data is processed locally and never stored or shared with third parties.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📜</div>
+          <h3>Full History</h3>
+          <p>Keep track of all your analyses with searchable history and detailed logs.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🌙</div>
+          <h3>Dark & Light Mode</h3>
+          <p>Switch between themes for comfortable viewing at any time of day.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Red Flags Tips -->
+    <section class="tips-section">
+      <div class="tips-title">🚩 Common Red Flags to Watch For</div>
+      <ul class="tips-list">
+        <li><strong>No company details:</strong> Legitimate jobs include company name, location, and contact info.</li>
+        <li><strong>Too good to be true:</strong> Unusually high pay for minimal experience is often a scam.</li>
+        <li><strong>Poor grammar/spelling:</strong> Professional companies proofread their postings.</li>
+        <li><strong>Requests for personal info upfront:</strong> Real employers don't ask for SSN before hiring.</li>
+        <li><strong>Unknown contact methods:</strong> Be wary of Gmail addresses or generic email domains.</li>
+        <li><strong>Pressure to decide quickly:</strong> Scammers often push for fast decisions.</li>
+      </ul>
+    </section>
+
     <!-- Info Cards -->
     <section class="info-grid">
       <div class="info-card">
-        <div class="info-icon">⚡</div>
-        <h4>Instant Detection</h4>
-        <p>Get results in seconds using our trained ML model.</p>
+        <div class="info-icon">✓</div>
+        <h4>Always Verify</h4>
+        <p>Cross-reference with the company's official website before applying.</p>
       </div>
       <div class="info-card">
-        <div class="info-icon">🔐</div>
-        <h4>Private & Secure</h4>
-        <p>Your data is processed locally and never stored permanently.</p>
+        <div class="info-icon">🛡️</div>
+        <h4>Protect Yourself</h4>
+        <p>Never send money, gift cards, or sensitive info to potential employers.</p>
       </div>
       <div class="info-card">
-        <div class="info-icon">📊</div>
-        <h4>Detailed Analysis</h4>
-        <p>View confidence scores and prediction details for every check.</p>
+        <div class="info-icon">📞</div>
+        <h4>Direct Contact</h4>
+        <p>Call the company directly to confirm the job posting is legitimate.</p>
       </div>
     </section>
   </div>
@@ -238,6 +351,15 @@
         if (saved) document.documentElement.setAttribute('data-theme', saved);
       } catch {}
     })();
+
+    // Character counter
+    function updateCharCount() {
+      const count = document.getElementById('jobText').value.length;
+      document.getElementById('charCount').textContent = count;
+      if (count > 5000) {
+        document.getElementById('jobText').value = document.getElementById('jobText').value.substring(0, 5000);
+      }
+    }
 
     // Handle prediction
     async function handlePredict(e) {
@@ -301,8 +423,8 @@
       document.getElementById('detailTime').textContent = now;
 
       chips.innerHTML = isFake
-        ? '<div class="chip negative">⚠️ Likely Scam</div><div class="chip negative">⚠️ Use Caution</div>'
-        : '<div class="chip positive">✓ Legitimate</div><div class="chip positive">✓ Safe to Apply</div>';
+        ? '<div class="chip negative">⚠️ Likely Scam</div><div class="chip negative">⚠️ Exercise Caution</div><div class="chip negative">⚠️ Report if Possible</div>'
+        : '<div class="chip positive">✓ Legitimate</div><div class="chip positive">✓ Safe to Apply</div><div class="chip positive">✓ Verified Posting</div>';
 
       resultsSection.classList.add('show');
       resultsSection.scrollIntoView({ behavior: 'smooth' });
@@ -312,12 +434,16 @@
     function copyResult() {
       const text = document.getElementById('resultVerdict').textContent;
       navigator.clipboard.writeText('JobGuard Prediction: ' + text);
-      alert('Copied to clipboard!');
+      const msg = document.getElementById('successMsg');
+      msg.textContent = '✓ Copied to clipboard!';
+      msg.classList.remove('hidden');
+      setTimeout(() => msg.classList.add('hidden'), 2000);
     }
 
     function newAnalysis() {
       document.getElementById('predictForm').reset();
       document.getElementById('resultsSection').classList.remove('show');
+      updateCharCount();
       document.getElementById('jobText').focus();
     }
   </script>

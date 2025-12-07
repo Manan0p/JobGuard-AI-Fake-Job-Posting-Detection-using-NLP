@@ -166,12 +166,12 @@
       <div class="nav-actions">
         <button class="btn" id="themeToggle" onclick="toggleTheme()">🌓</button>
         {% if session.get('admin_logged_in') %}
-          <a href="{{ url_for('home') }}" class="btn">Home</a>
+          <a href="{{ url_for('predict_form') }}" class="btn">Make Predictions</a>
           <a href="{{ url_for('admin_dashboard') }}" class="btn">Dashboard</a>
           <a href="{{ url_for('logout') }}" class="btn">Logout</a>
         {% else %}
           <a href="{{ url_for('predict_form') }}" class="btn">Make Predictions</a>
-          <a href="{{ url_for('admin_login') }}" class="btn">Admin Login</a>
+          <a href="{{ url_for('admin_login') }}" class="btn">Login</a>
         {% endif %}
       </div>
     </div>
@@ -398,13 +398,6 @@
   <section class="cta">
     <div class="cta-box">
       <div class="cta-title">Start screening job posts in seconds</div>
-      <div class="cta-actions">
-        <a href="{{ url_for('predict_form') }}" class="btn primary">Make Predictions</a>
-        <a href="{{ url_for('history') }}" class="btn">View History</a>
-        {% if not session.get('admin_logged_in') %}
-          <a href="{{ url_for('admin_login') }}" class="btn">Admin Login</a>
-        {% endif %}
-      </div>
     </div>
   </section>
 
