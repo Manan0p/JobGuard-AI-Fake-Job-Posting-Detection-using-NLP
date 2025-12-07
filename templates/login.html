@@ -118,7 +118,7 @@
         <p class="login-subtitle">Restricted access • Admins only</p>
       </div>
 
-      <!-- Form -->
+            <!-- Form -->
       <form method="POST" id="loginForm">
         <div class="form-group">
           <!-- Username -->
@@ -139,8 +139,8 @@
             </div>
           </div>
 
-          <!-- Hidden next parameter -->
-          <input type="hidden" name="next" value="{{ request.args.get('next', '') }}">
+          <!-- Capture referrer page -->
+          <input type="hidden" name="next" id="nextPage" value="">
 
           <!-- Submit -->
           <button type="submit" class="submit-btn">Sign In</button>
@@ -197,6 +197,23 @@
       } catch {}
     })();
 
+    // Capture the referrer page
+    document.addEventListener('DOMContentLoaded', function() {
+      const nextPageInput = document.getElementById('nextPage');
+      const referrer = document.referrer || sessionStorage.getItem('loginRedirect');
+      
+      if (referrer && referrer.includes(window.location.host)) {
+        nextPageInput.value = referrer;
+      } else {
+        // Fallback: get from URL parameter if available
+        const urlParams = new URLSearchParams(window.location.search);
+        const nextParam = urlParams.get('next');
+        if (nextParam) {
+          nextPageInput.value = nextParam;
+        }
+      }
+    });
+
     // Form validation feedback
     document.getElementById('loginForm').addEventListener('submit', function(e) {
       const username = document.getElementById('username').value.trim();
@@ -208,7 +225,7 @@
       }
     });
 
-    // Password visibility toggle (optional enhancement)
+    // Password visibility toggle
     document.getElementById('password').addEventListener('keypress', function(e) {
       if (e.key === 'Enter') {
         document.getElementById('loginForm').submit();

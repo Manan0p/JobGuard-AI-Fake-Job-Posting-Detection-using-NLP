@@ -127,18 +127,18 @@ def admin_login():
     if request.method == 'POST':
         username = request.form.get('username', '').strip()
         password = request.form.get('password', '').strip()
+        next_page = request.form.get('next', '')  # Get from POST
         
-        # Your authentication logic here
-        if username == 'admin' and password == 'password123':  # Replace with actual auth
+        # Your authentication logic
+        if username == 'admin' and password == 'password123':
             session['admin_logged_in'] = True
             
-            # Get the page user came from (referrer)
-            next_page = request.args.get('next')
+            # Redirect to the page user came from
             if next_page and is_safe_url(next_page):
                 return redirect(next_page)
             
-            # Default redirect to admin dashboard
-            return redirect(url_for('admin_dashboard'))
+            # Fallback to home
+            return redirect(url_for('home'))
         else:
             return render_template('login.html', error='Invalid credentials')
     
