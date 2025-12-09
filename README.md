@@ -356,7 +356,21 @@ heroku open
 
 ## 📝 License
 
-This project is open-source for educational purposes.
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+
+### MIT License Summary
+
+**You are free to:**
+- ✅ Use commercially
+- ✅ Modify
+- ✅ Distribute
+- ✅ Use privately
+
+**Under the condition:**
+- ⚖️ Include original copyright notice and license text
+
+**Limitations:**
+- ❌ No liability or warranty
 
 ---
 
