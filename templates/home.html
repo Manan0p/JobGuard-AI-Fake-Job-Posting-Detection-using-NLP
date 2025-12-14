@@ -26,10 +26,12 @@
     .brand .pulse { width:12px; height:12px; border-radius:50%; background:var(--accent); box-shadow:0 0 0 0 rgba(59,130,246,0.7); animation:pulse 2s infinite; }
     @keyframes pulse { 0%{box-shadow:0 0 0 0 rgba(59,130,246,0.7);} 70%{box-shadow:0 0 0 16px rgba(59,130,246,0);} 100%{box-shadow:0 0 0 0 rgba(59,130,246,0);} }
     .nav-actions { display:flex; gap:14px; }
-    .btn { padding:14px 18px; border-radius:14px; border:1px solid var(--border); background:var(--surface); color:var(--text); text-decoration:none; font-weight:700; font-size:16px; transition:transform .12s ease, background .12s ease; }
-    .btn:hover { background:var(--card); transform:translateY(-1px); }
+    .btn { padding:14px 18px; border-radius:14px; border:1px solid var(--border); background:var(--surface); color:var(--text); text-decoration:none; font-weight:700; font-size:16px; transition:all .12s ease; cursor:pointer; }
+    .btn:hover { background:var(--card); transform:translateY(-2px); box-shadow:0 8px 16px var(--shadow); }
+    .btn:active { transform:scale(0.95); }
     .btn.primary { background:var(--accent); color:#fff; border-color:var(--hover); }
-    .btn.primary:hover { filter:brightness(1.05); }
+    .btn.primary:hover { filter:brightness(1.05); transform:translateY(-2px); }
+    .btn.primary:active { transform:scale(0.95); }
 
     /* Hero */
     .hero { position:relative; overflow:hidden; }
@@ -66,8 +68,9 @@
     /* Features + Testimonials */
     .sections { max-width:1440px; margin:36px auto 90px; padding:0 36px; display:grid; gap:36px; grid-template-columns: 1.35fr .9fr; }
     .features { display:grid; gap:22px; grid-template-columns: repeat(auto-fit, minmax(300px,1fr)); }
-    .feature { background:var(--surface); border:1px solid var(--border); border-radius:22px; padding:22px; transition:transform .12s ease; }
-    .feature:hover { transform:translateY(-3px); }
+    .feature { background:var(--surface); border:1px solid var(--border); border-radius:22px; padding:22px; transition:all .2s ease; cursor:pointer; }
+    .feature:hover { transform:translateY(-4px); border-color:var(--accent); box-shadow:0 12px 28px var(--shadow); }
+    .feature:active { transform:translateY(-2px); }
     .feature h4 { margin:0 0 10px; font-size:20px; display:flex; align-items:center; gap:10px; }
     .feature p { margin:0; color:var(--muted); font-size:16px; }
 
@@ -97,6 +100,16 @@
     .dot { width:8px; height:8px; border-radius:50%; background:var(--real); }
     .dot.fake { background:var(--fake); }
     @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    /* Tooltip */
+    [data-tooltip] { position:relative; }
+    [data-tooltip]:hover::after { content:attr(data-tooltip); position:absolute; bottom:100%; left:50%; transform:translateX(-50%); padding:8px 12px; background:var(--accent); color:#fff; border-radius:8px; font-size:12px; white-space:nowrap; z-index:100; margin-bottom:8px; animation:fadeInUp .2s ease; }
+    [data-tooltip]:hover::before { content:''; position:absolute; bottom:100%; left:50%; transform:translateX(-50%); border:4px solid transparent; border-top-color:var(--accent); z-index:100; animation:fadeInUp .2s ease; }
+    @keyframes fadeInUp { from { opacity:0; transform:translateX(-50%) translateY(4px); } to { opacity:1; transform:translateX(-50%) translateY(0); } }
+    
+    /* Processing pulse */
+    .processing { animation:processingPulse 1.5s ease-in-out infinite; }
+    @keyframes processingPulse { 0%, 100% { opacity:1; } 50% { opacity:0.6; } }
 
     /* Stacked Use Cases & Security sections */
     .usecases-section { max-width:1440px; margin:0 auto 36px; padding:0 36px; }
@@ -135,7 +148,8 @@
 
     /* CTA */
     .cta { max-width:1440px; margin:0 auto 76px; padding:0 36px; }
-    .cta-box { background:linear-gradient(90deg, var(--accent), var(--hover)); color:#fff; border-radius:24px; padding:32px 34px; display:flex; align-items:center; justify-content:center; gap:24px; box-shadow:0 12px 32px -8px var(--shadow); text-align:center; }
+    .cta-box { background:linear-gradient(90deg, var(--accent), var(--hover)); color:#fff; border-radius:24px; padding:32px 34px; display:flex; align-items:center; justify-content:center; gap:24px; box-shadow:0 12px 32px -8px var(--shadow); text-align:center; transition:all .2s ease; }
+    .cta-box:hover { transform:translateY(-4px); box-shadow:0 16px 40px -8px var(--shadow); }
     .cta-title { font-weight:900; font-size:26px; margin:0 auto; text-align:center; }
     .cta-actions { display:flex; gap:16px; flex-wrap:wrap; }
 
