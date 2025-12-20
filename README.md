@@ -23,7 +23,7 @@ JobGuard AI helps job seekers identify scam postings by analyzing text patterns 
 - ✅ Session-based authentication for admins
 - ✅ SQLite database for audit trails
 - ✅ Responsive design (mobile, tablet, desktop)
-- ✅ Modern gradient UI with smooth animations
+- ✅ Modern UI with smooth animations
 
 ---
 
